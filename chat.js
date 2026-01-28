@@ -1,62 +1,43 @@
-import { db } from "./firebase.js";
-import { encrypt, decrypt } from "./crypto.js";
 import {
-  collection, addDoc, query, where, getDocs, orderBy
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  db, collection, addDoc, query,
+  where, orderBy, onSnapshot
+} from "./firebase.js";
 
-const userId = localStorage.getItem("userId");
-const chatId = new URLSearchParams(location.search).get("chat");
+const chatId = new URLSearchParams(location.search).get("id");
+const uid = localStorage.getItem("uid");
 
-const messagesDiv = document.getElementById("messages");
-const input = document.getElementById("msg");
+const messagesEl = document.getElementById("messages");
+const form = document.getElementById("sendForm");
+const input = document.getElementById("text");
 
-async function loadMessages() {
-  messagesDiv.innerHTML = "";
+const q = query(
+  collection(db, "messages"),
+  where("chatId", "==", chatId),
+  orderBy("createdAt")
+);
 
-  const q = query(
-    collection(db, "messages"),
-    where("chatId", "==", chatId),
-    orderBy("createdAt")
-  );
-
-  const snap = await getDocs(q);
-
-  for (const docu of snap.docs) {
-    const data = docu.data();
-    const text = await decrypt(data.ciphertext);
-
+onSnapshot(q, snap => {
+  messagesEl.innerHTML = "";
+  snap.forEach(doc => {
+    const m = doc.data();
     const div = document.createElement("div");
-    div.textContent = text;
-    messagesDiv.appendChild(div);
-  }
-}
+    div.className = "msg " + (m.from === uid ? "mine" : "their");
+    div.textContent = m.text;
+    messagesEl.appendChild(div);
+  });
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+});
 
-document.getElementById("send").onclick = async () => {
-  const text = input.value;
-  input.value = "";
-
-  const chatSnap = await getDocs(
-    query(collection(db, "chats"), where("__name__", "==", chatId))
-  );
-  const chat = chatSnap.docs[0].data();
-
-  const otherId = chat.userA === userId ? chat.userB : chat.userA;
-
-  const otherSnap = await getDocs(
-    query(collection(db, "profiles"), where("__name__", "==", otherId))
-  );
-  const other = otherSnap.docs[0].data();
-
-  const cipher = await encrypt(text, other.publicKey);
+form.onsubmit = async e => {
+  e.preventDefault();
+  if (!input.value.trim()) return;
 
   await addDoc(collection(db, "messages"), {
     chatId,
-    sender: userId,
-    ciphertext: cipher,
+    from: uid,
+    text: input.value,
     createdAt: Date.now()
   });
 
-  loadMessages();
+  input.value = "";
 };
-
-loadMessages();
