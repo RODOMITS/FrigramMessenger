@@ -1,13 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Chat</title>
+  <title>Чат</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div id="messages"></div>
-  <input id="msg">
-  <button id="send">Send</button>
+<body class="chat-body">
+
+  <div class="chat-header">
+    <button onclick="history.back()">←</button>
+    <span id="chatTitle">Чат</span>
+  </div>
+
+  <div id="messages" class="messages"></div>
+
+  <form id="sendForm" class="input-bar">
+    <input id="text" placeholder="Сообщение..." autocomplete="off">
+    <button>➤</button>
+  </form>
 
   <script type="module" src="chat.js"></script>
 </body>
