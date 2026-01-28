@@ -7,18 +7,18 @@
 </head>
 <body class="chat-body">
 
-  <div class="chat-header">
-    <button onclick="history.back()">←</button>
-    <span id="chatTitle">Чат</span>
-  </div>
+<div class="chat-header">
+  <button onclick="history.back()">←</button>
+  <span>Чат</span>
+</div>
 
-  <div id="messages" class="messages"></div>
+<div id="messages" class="messages"></div>
 
-  <form id="sendForm" class="input-bar">
-    <input id="text" placeholder="Сообщение..." autocomplete="off">
-    <button>➤</button>
-  </form>
+<form id="form" class="input-bar">
+  <input id="text" placeholder="Сообщение">
+  <button>➤</button>
+</form>
 
-  <script type="module" src="chat.js"></script>
+<script type="module" src="chat.js"></script>
 </body>
 </html>
