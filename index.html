@@ -1,41 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Messenger</title>
+  <title>Профиль</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Профиль</h1>
-  <button id="newChat">Новый чат</button>
 
-  <script type="module">
-    import { initUser } from "./auth.js";
-    import { db } from "./firebase.js";
-    import {
-      collection, addDoc, query, where, getDocs
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div class="profile">
+  <h2>Профиль</h2>
 
-    const userId = await initUser();
+  <div class="card">
+    <div>Твой ID:</div>
+    <code id="uid"></code>
+  </div>
 
-    document.getElementById("newChat").onclick = async () => {
-      const username = prompt("Ник собеседника:");
+  <div class="card">
+    <input id="targetId" placeholder="ID друга">
+    <button id="newChatBtn">Создать чат</button>
+  </div>
 
-      const q = query(
-        collection(db, "profiles"),
-        where("username", "==", username)
-      );
-      const snap = await getDocs(q);
+  <h3>Чаты</h3>
+  <div id="chatList"></div>
+</div>
 
-      if (snap.empty) return alert("Не найден");
-
-      const other = snap.docs[0];
-      const chatRef = await addDoc(collection(db, "chats"), {
-        userA: userId,
-        userB: other.id
-      });
-
-      location.href = `chat.html?chat=${chatRef.id}`;
-    };
-  </script>
+<script type="module" src="profile.js"></script>
 </body>
 </html>
