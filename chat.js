@@ -6,8 +6,8 @@ import {
 const chatId = new URLSearchParams(location.search).get("id");
 const uid = localStorage.getItem("uid");
 
-const messagesEl = document.getElementById("messages");
-const form = document.getElementById("sendForm");
+const messages = document.getElementById("messages");
+const form = document.getElementById("form");
 const input = document.getElementById("text");
 
 const q = query(
@@ -17,15 +17,15 @@ const q = query(
 );
 
 onSnapshot(q, snap => {
-  messagesEl.innerHTML = "";
+  messages.innerHTML = "";
   snap.forEach(doc => {
     const m = doc.data();
     const div = document.createElement("div");
     div.className = "msg " + (m.from === uid ? "mine" : "their");
     div.textContent = m.text;
-    messagesEl.appendChild(div);
+    messages.appendChild(div);
   });
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+  messages.scrollTop = messages.scrollHeight;
 });
 
 form.onsubmit = async e => {
@@ -41,4 +41,3 @@ form.onsubmit = async e => {
 
   input.value = "";
 };
-
